@@ -9,11 +9,27 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y curl jq
       - name: Decode base64 content
         run: |
-          # Replace 'Base.txt' with the path to the file containing the base64 content
+          # Replace 'base.txt' with the path to the file containing the URL or base64 content
           content=$(cat Base.txt)
-          echo "$content" | base64 --decode > decoded.txt
+          # Check if content is a URL
+          if [[ $content =~ ^https?:// ]]; then
+            echo "Content is a URL"
+            # Retrieve content from URL
+            content=$(curl -sL $content)
+          fi
+          # Check if content is base64 encoded
+          if echo "$content" | base64 --decode | base64 --encode | grep -q "^$content\$"; then
+            echo "Content is base64 encoded"
+            # Decode base64 content
+            echo "$content" | base64 --decode > decoded.txt
+            echo "Decoded content saved to decoded.txt"
+          else
+            echo "Content is not base64 encoded"
+          fi
       - name: Commit and push changes
         run: |
           git config --global user.name 'GitHub Actions'
