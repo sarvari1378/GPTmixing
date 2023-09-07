@@ -16,10 +16,14 @@ jobs:
       - name: Decode content
         run: |
           while read link; do
+            echo "Processing link: $link"
             content=$(curl -s $link)
+            echo "Content retrieved from link: $content"
             if [[ $content =~ ^[A-Za-z0-9+/]+={0,2}$ ]]; then
+              echo "Content is in Base64 format"
               echo $content | base64 --decode >> decoded.txt
             else
+              echo "Content is not in Base64 format"
               echo $content >> decoded.txt
             fi
           done < Base.txt
