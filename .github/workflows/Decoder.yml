@@ -14,7 +14,7 @@ jobs:
       - name: Decode base64 content
         run: |
           # Replace 'base.txt' with the path to the file containing the URLs or base64 content
-          content=$(cat base.txt)
+          content=$(cat Base.txt)
           # Split content into lines
           IFS=$'\n' read -rd '' -a lines <<<"$content"
           # Initialize decoded content variable
