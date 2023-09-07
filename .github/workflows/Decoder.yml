@@ -1,0 +1,23 @@
+name: Decode Base64
+on:
+  push:
+    branches:
+      - main
+jobs:
+  decode:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Decode base64 content
+        run: |
+          # Replace 'Base.txt' with the path to the file containing the base64 content
+          content=$(cat file.txt)
+          echo "$content" | base64 --decode > decoded.txt
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          git add decoded.txt
+          git commit -m "Decode base64 content"
+          git push
