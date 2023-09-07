@@ -20,7 +20,7 @@ jobs:
             else
               echo $content >> decoded.txt
             fi
-          done < base.txt
+          done < Base.txt
       - name: Commit and push changes
         run: |
           git config --global user.name 'GitHub Actions'
