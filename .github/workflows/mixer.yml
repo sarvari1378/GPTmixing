@@ -15,21 +15,7 @@ jobs:
         run: echo "" > decoded.txt
       - name: Decode content
         run: |
-          number_to_emoji() {
-            local number=$1
-            if (( number < 0 || number > 99 )); then
-                echo "The input number must be a one or two-digit integer."
-                return 1
-            fi
-            local -a emoji_dict=("0️⃣" "1️⃣" "2️⃣" "3️⃣" "4️⃣" "5️⃣" "6️⃣" "7️⃣" "8️⃣" "9️⃣")
-            if (( number < 10 )); then
-                echo "${emoji_dict[number]}"
-            else
-                local tens=$((number / 10))
-                local ones=$((number % 10))
-                echo "${emoji_dict[tens]}${emoji_dict[ones]}"
-            fi
-          }
+          
           i=1
           while read link; do
             echo "Processing link: $link"
@@ -46,6 +32,21 @@ jobs:
           done < Base.txt
       - name: Process decoded.txt
         run: |
+          number_to_emoji() {
+            local number=$1
+            if (( number < 0 || number > 99 )); then
+                echo "The input number must be a one or two-digit integer."
+                return 1
+            fi
+            local -a emoji_dict=("0️⃣" "1️⃣" "2️⃣" "3️⃣" "4️⃣" "5️⃣" "6️⃣" "7️⃣" "8️⃣" "9️⃣")
+            if (( number < 10 )); then
+                echo "${emoji_dict[number]}"
+            else
+                local tens=$((number / 10))
+                local ones=$((number % 10))
+                echo "${emoji_dict[tens]}${emoji_dict[ones]}"
+            fi
+          }
           i=1
           while read line; do
             line=${line%%#*}
