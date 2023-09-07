@@ -1,0 +1,47 @@
+name: Gather Content from Links
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  gather-content:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Gather content from links
+        run: |
+          import requests
+
+          with open('links', 'r') as f:
+              links = f.read().splitlines()
+
+          content = []
+
+          for link in links:
+              response = requests.get(link)
+              content.append(response.text)
+
+          with open('content.txt', 'w') as f:
+              f.write('\n'.join(content))
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          git add content.txt
+          git commit -m 'Update content file'
+          git push
