@@ -13,23 +13,34 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y curl jq
       - name: Decode base64 content
         run: |
-          # Replace 'base.txt' with the path to the file containing the URL or base64 content
-          content=$(cat Base.txt)
-          # Check if content is a URL
-          if [[ $content =~ ^https?:// ]]; then
-            echo "Content is a URL"
-            # Retrieve content from URL
-            content=$(curl -sL $content)
-          fi
-          # Check if content is base64 encoded
-          if echo "$content" | base64 --decode | base64 --encode | grep -q "^$content\$"; then
-            echo "Content is base64 encoded"
-            # Decode base64 content
-            echo "$content" | base64 --decode > decoded.txt
-            echo "Decoded content saved to decoded.txt"
-          else
-            echo "Content is not base64 encoded"
-          fi
+          # Replace 'base.txt' with the path to the file containing the URLs or base64 content
+          content=$(cat base.txt)
+          # Split content into lines
+          IFS=$'\n' read -rd '' -a lines <<<"$content"
+          # Initialize decoded content variable
+          decoded_content=""
+          # Process each line
+          for line in "${lines[@]}"; do
+            # Check if line is a URL
+            if [[ $line =~ ^https?:// ]]; then
+              echo "Line is a URL"
+              # Retrieve content from URL
+              line_content=$(curl -sL $line)
+            else
+              line_content=$line
+            fi
+            # Check if line content is base64 encoded
+            if echo "$line_content" | base64 --decode | base64 --encode | grep -q "^$line_content\$"; then
+              echo "Line content is base64 encoded"
+              # Decode base64 content and append to decoded content variable
+              decoded_content+=$(echo "$line_content" | base64 --decode)
+            else
+              echo "Line content is not base64 encoded"
+            fi
+          done
+          # Save decoded content to file
+          echo "$decoded_content" > decoded.txt
+          echo "Decoded content saved to decoded.txt"
       - name: Commit and push changes
         run: |
           git config --global user.name 'GitHub Actions'
