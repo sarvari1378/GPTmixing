@@ -12,8 +12,8 @@ jobs:
       - name: Decode base64 content
         run: |
           # Replace 'Base.txt' with the path to the file containing the base64 content
-          content=$(cat Base.txt)
-          echo "$content" | base64 --decode > decoded.txt
+          content=$(cat Base)
+          echo "$content" | base64 --decode > decoded
       - name: Commit and push changes
         run: |
           git config --global user.name 'GitHub Actions'
